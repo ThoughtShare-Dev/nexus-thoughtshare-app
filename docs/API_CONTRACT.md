@@ -2,7 +2,7 @@
 
 The single source of truth for how the backend and frontend talk. Every endpoint, request body, and response shape lives here. If any of it changes, it changes here first, in the same commit as the code.
 
-**Base URL (local):** `http://localhost:5000`
+**Base URL (local):** `http://localhost:3000`
 **Owner:** Backend team · **Status:** Draft for frontend sign-off
 
 ---
