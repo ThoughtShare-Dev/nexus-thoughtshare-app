@@ -78,7 +78,7 @@ devops-002-ci-cd
 docs/api-updates
 ```
 
-This naming convention makes it easy to identify both the team responsible for a branch and the feature being developed..
+This naming convention makes it easy to identify both the team responsible for a branch and the feature being developed.
 
 ---
 
@@ -210,6 +210,22 @@ Responsible for:
 - Validation
 - Unit Tests
 
+Deliverables
+
+- JWT authentication
+- Authentication middleware
+- Register endpoint
+- Login endpoint
+- Member profile endpoints
+- Request validation
+
+Dependencies
+
+- Database schema
+- Prisma models
+
+---
+
 ### Backend Engineer 2
 
 Responsible for:
@@ -218,6 +234,20 @@ Responsible for:
 - Search
 - Learning Requests
 - Notifications
+
+Deliverables
+
+- Skills API
+- Search API
+- Learning Request API
+- Email notification service
+
+Dependencies
+
+- Authentication module
+- Member module
+
+---
 
 ### Backend Engineer 3
 
@@ -229,39 +259,18 @@ Responsible for:
 - Database
 - Deployment Support
 
----
+Deliverables
 
-## Development Timeline
+- Review API
+- Report API
+- Admin API
+- Prisma migrations
+- Docker configuration
 
-### Week 1
+Dependencies
 
-- Project setup
-- Folder structure
-- Database design
 - Authentication
-- Swagger setup
-
-### Week 2
-
-- Profile
-- Skills
-- Search
 - Learning Requests
-
-### Week 3
-
-- Reviews
-- Reports
-- Notifications
-- Admin
-
-### Week 4
-
-- Integration
-- Testing
-- Deployment
-- Final Demo
-
 ---
 
 ## Engineering Standards
