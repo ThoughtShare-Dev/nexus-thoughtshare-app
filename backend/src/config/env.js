@@ -1,0 +1,3 @@
+// Environment variable configuration.
+
+export {};
