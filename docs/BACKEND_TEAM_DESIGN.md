@@ -28,28 +28,57 @@ This document defines how the backend team will collaborate, structure the proje
 
 ## Repository Strategy
 
-Current repository workflow:
+The project follows a collaborative Git workflow using `main` and `develop` as the primary branches. Each team member works on a dedicated feature branch and submits changes through Pull Requests.
 
 ```text
 main
 └── develop
-    ├── be-001
-    ├── be-002
-    ├── be-003
-    ├── fe-001
-    ├── fe-002
-    ├── devops-001
-    └── docs/*
+    ├── be-001-authentication
+    ├── be-002-learning-requests
+    ├── be-003-reviews
+    ├── fe-001-homepage
+    ├── devops-001-docker
+    └── docs/backend-documentation
 ```
 
 ### Branching Rules
 
-- Protect `main` and `develop`.
-- Never commit directly to `main`.
-- All work must be done in feature branches.
-- Merge changes only through Pull Requests.
-- Require at least one approving review before merging.
-- Keep branches focused on a single feature or task.
+- `main` contains stable, production-ready code.
+- `develop` is the primary integration branch for active development.
+- Every feature, bug fix, or documentation update must be completed in its own branch.
+- All branches must be created from `develop`.
+- No direct commits are allowed to `main` or `develop`.
+- All changes must be merged through Pull Requests.
+- Every Pull Request requires at least one approval before merging.
+- Delete branches after they have been successfully merged.
+
+### Branch Naming Convention
+
+The project uses descriptive branch names that combine the team identifier with the feature being developed.
+
+Examples:
+
+```text
+be-001-authentication
+be-002-learning-requests
+be-003-reviews
+fe-001-homepage
+devops-001-docker
+docs/backend-documentation
+```
+
+Future branches should follow the same pattern:
+
+```text
+be-001-profile
+be-002-search
+be-003-admin
+fe-002-dashboard
+devops-002-ci-cd
+docs/api-updates
+```
+
+This naming convention makes it easy to identify both the team responsible for a branch and the feature being developed..
 
 ---
 
