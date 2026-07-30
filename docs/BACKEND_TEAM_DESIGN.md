@@ -1,0 +1,332 @@
+# ThoughtShare Backend Team Design Guide
+
+## Purpose
+
+This document defines how the backend team will collaborate, structure the project, and deliver the ThoughtShare MVP. It establishes shared engineering standards, ownership, development workflow, and architectural guidelines to ensure consistency across all backend modules.
+
+---
+
+## Recommended Stack
+
+| Layer | Technology |
+|--------|------------|
+| Runtime | Node.js |
+| Framework | Express.js |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Authentication | JWT |
+| Password Hashing | bcrypt |
+| Validation | Zod |
+| Logging | Winston |
+| API Documentation | Swagger (OpenAPI) |
+| Testing | Jest + Supertest |
+| Linting | ESLint |
+| Formatting | Prettier |
+| Containerization | Docker |
+
+---
+
+## Repository Strategy
+
+The project follows a collaborative Git workflow using `main` and `develop` as the primary branches. Each team member works on a dedicated feature branch and submits changes through Pull Requests.
+
+```text
+main
+└── develop
+    ├── be-001-authentication
+    ├── be-002-learning-requests
+    ├── be-003-reviews
+    ├── fe-001-homepage
+    ├── devops-001-docker
+    └── docs/backend-documentation
+```
+
+### Branching Rules
+
+- `main` contains stable, production-ready code.
+- `develop` is the primary integration branch for active development.
+- Every feature, bug fix, or documentation update must be completed in its own branch.
+- All branches must be created from `develop`.
+- No direct commits are allowed to `main` or `develop`.
+- All changes must be merged through Pull Requests.
+- Every Pull Request requires at least one approval before merging.
+- Delete branches after they have been successfully merged.
+
+### Branch Naming Convention
+
+The project uses descriptive branch names that combine the team identifier with the feature being developed.
+
+Examples:
+
+```text
+be-001-authentication
+be-002-learning-requests
+be-003-reviews
+fe-001-homepage
+devops-001-docker
+docs/backend-documentation
+```
+
+Future branches should follow the same pattern:
+
+```text
+be-001-profile
+be-002-search
+be-003-admin
+fe-002-dashboard
+devops-002-ci-cd
+docs/api-updates
+```
+
+This naming convention makes it easy to identify both the team responsible for a branch and the feature being developed.
+
+---
+
+## Suggested Backend Structure
+
+```text
+backend/
+├── src/
+│   ├── config/
+│   ├── controllers/
+│   ├── routes/
+│   ├── services/
+│   ├── repositories/
+│   ├── middlewares/
+│   ├── validators/
+│   ├── models/
+│   ├── database/
+│   │   ├── migrations/
+│   │   └── seeders/
+│   ├── utils/
+│   ├── constants/
+│   └── app.js
+├── tests/
+├── server.js
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+└── README.md
+```
+
+---
+
+## Database First
+
+The database schema should be finalized before implementing business logic.
+
+### Core Entities
+
+- Member
+- Skill
+- MemberTeachingSkill
+- MemberLearningSkill
+- LearningRequest
+- Review
+- Report
+- Notification
+- Admin
+
+### Deliverables
+
+- Entity Relationship Diagram (ERD)
+- Prisma Schema
+- Initial Database Migration
+- Seed Data
+- Database Index Strategy
+
+---
+
+## API Modules
+
+The backend implementation follows the official `API_CONTRACT.md`.
+
+Any changes to endpoints, request bodies, response formats, authentication rules, or business rules must be updated in `API_CONTRACT.md` before implementation.
+
+### Authentication
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| POST | `/auth/register` | Register a new member |
+| POST | `/auth/login` | Authenticate a member and return a JWT |
+| GET | `/auth/me` | Retrieve the authenticated member's profile |
+
+### Member Profile
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| GET | `/members/:id` | View a member's public profile |
+| PUT | `/members/:id` | Update the authenticated member's profile |
+| GET | `/members/:id/reviews` | Retrieve reviews for a member |
+
+### Skills & Search
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| GET | `/skills` | Retrieve the skill library |
+| GET | `/members?skill=&q=` | Search members by teaching skill or keyword |
+
+### Learning Requests
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| POST | `/requests` | Send a learning request |
+| GET | `/requests` | Retrieve incoming and outgoing requests |
+| PATCH | `/requests/:id` | Accept or decline a learning request |
+
+### Reviews
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| POST | `/reviews` | Create a review |
+| PUT | `/reviews/:id` | Update an existing review |
+
+### Reporting
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| POST | `/reports` | Report a member |
+
+### Administration
+
+| Method | Endpoint | Purpose |
+|---------|----------|---------|
+| GET | `/admin/reports` | List pending reports |
+| PATCH | `/admin/reports/:id` | Resolve a report |
+| POST | `/admin/skills` | Add a new skill |
+| DELETE | `/admin/reviews/:id` | Remove an inappropriate review |
+
+---
+
+## Team Allocation
+
+### Backend Engineer 1
+
+Responsible for:
+
+- Authentication
+- User Profile
+- Middleware
+- Validation
+- Unit Tests
+
+Deliverables
+
+- JWT authentication
+- Authentication middleware
+- Register endpoint
+- Login endpoint
+- Member profile endpoints
+- Request validation
+
+Dependencies
+
+- Database schema
+- Prisma models
+
+---
+
+### Backend Engineer 2
+
+Responsible for:
+
+- Skills
+- Search
+- Learning Requests
+- Notifications
+
+Deliverables
+
+- Skills API
+- Search API
+- Learning Request API
+- Email notification service
+
+Dependencies
+
+- Authentication module
+- Member module
+
+---
+
+### Backend Engineer 3
+
+Responsible for:
+
+- Reviews
+- Reports
+- Admin
+- Database
+- Deployment Support
+
+Deliverables
+
+- Review API
+- Report API
+- Admin API
+- Prisma migrations
+- Docker configuration
+
+Dependencies
+
+- Authentication
+- Learning Requests
+---
+
+## Engineering Standards
+
+### Git
+
+- Conventional Commits
+- Feature branches
+- Pull Requests only
+- No direct commits to `main` or `develop`
+
+### Commit Types
+
+- `feat:`
+- `fix:`
+- `docs:`
+- `refactor:`
+- `test:`
+- `chore:`
+
+### Code Quality
+
+- ESLint required
+- Prettier required
+- Unit tests for services
+- Integration tests for API endpoints
+- Consistent error handling
+- Meaningful logging
+
+---
+
+## Immediate Action Checklist
+
+- Finalize folder structure
+- Approve database schema
+- Complete Prisma schema
+- Finalize API Contract
+- Configure Docker
+- Configure GitHub Actions
+- Configure Swagger
+- Protect repository branches
+- Assign backend module ownership
+- Create GitHub Issues
+- Create first database migration
+- Add `.env.example`
+
+---
+
+## Success Criteria
+
+- Stable and version-controlled API Contract.
+- Database schema approved before implementation.
+- All backend modules implemented according to the PRD.
+- Minimum 80% test coverage for core business logic.
+- Successful integration with the frontend.
+- Dockerized application running consistently across environments.
+- CI pipeline passing before every merge.
+- All Pull Requests reviewed and approved before merging into `develop`.
+- MVP delivered within the agreed project timeline.
