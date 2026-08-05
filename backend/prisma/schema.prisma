@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ContactType {
+  EMAIL
+  WHATSAPP
+  PHONE
+  INSTAGRAM
+}
+
+model Member {
+  id                    String       @id @default(uuid()) @db.Uuid
+  name                  String       @db.VarChar(100)
+  email                 String       @unique @db.VarChar(255)
+  passwordHash          String       @db.VarChar(255)
+  bio                   String?      @db.VarChar(500)
+  profilePictureUrl     String?      @db.VarChar(500)
+  preferredContactType  ContactType?
+  preferredContactValue String?      @db.VarChar(255)
+  avgRating             Decimal      @default(0) @db.Decimal(3,2)
+  ratingCount           Int          @default(0)
+  isActive              Boolean      @default(true)
+  hiddenFromSearch      Boolean      @default(false)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+
+  @@index([hiddenFromSearch, isActive, avgRating, name])
+  @@index([isActive])
+  @@map("members")
+}
