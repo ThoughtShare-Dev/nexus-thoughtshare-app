@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum ContactType {
@@ -23,14 +23,106 @@ model Member {
   profilePictureUrl     String?      @db.VarChar(500)
   preferredContactType  ContactType?
   preferredContactValue String?      @db.VarChar(255)
-  avgRating             Decimal      @default(0) @db.Decimal(3,2)
+  avgRating             Decimal      @default(0) @db.Decimal(3, 2)
   ratingCount           Int          @default(0)
   isActive              Boolean      @default(true)
   hiddenFromSearch      Boolean      @default(false)
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
 
+  teachingSkills TeachingSkill[]
+  learningSkills LearningSkill[]
+
+  sentRequests     LearningRequest[] @relation("SentRequests")
+  receivedRequests LearningRequest[] @relation("ReceivedRequests")
+
+  reviewsGiven    Review[] @relation("ReviewsGiven")
+  reviewsReceived Review[] @relation("ReviewsReceived")
+
   @@index([hiddenFromSearch, isActive, avgRating, name])
   @@index([isActive])
   @@map("members")
+}
+
+model Skill {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teachingSkills TeachingSkill[]
+  learningSkills LearningSkill[]
+
+  @@index([name])
+  @@map("skills")
+}
+
+model TeachingSkill {
+  memberId String @db.Uuid
+  skillId  String @db.Uuid
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  skill  Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([memberId, skillId])
+  @@index([skillId])
+  @@map("teaching_skills")
+}
+
+model LearningSkill {
+  memberId String @db.Uuid
+  skillId  String @db.Uuid
+
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  skill  Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([memberId, skillId])
+  @@index([skillId])
+  @@map("learning_skills")
+}
+
+enum LearningRequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model LearningRequest {
+  id         String                @id @default(uuid()) @db.Uuid
+  senderId   String                @db.Uuid
+  receiverId String                @db.Uuid
+  status     LearningRequestStatus @default(PENDING)
+  message    String?               @db.VarChar(500)
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  sender   Member @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver Member @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  review Review?
+
+  @@index([senderId, status])
+  @@index([receiverId, status])
+  @@index([createdAt])
+  @@map("learning_requests")
+}
+
+model Review {
+  id                String   @id @default(uuid()) @db.Uuid
+  learningRequestId String   @unique @db.Uuid
+  reviewerId        String   @db.Uuid
+  revieweeId        String   @db.Uuid
+  rating            Int
+  comment           String?  @db.VarChar(500)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  learningRequest LearningRequest @relation(fields: [learningRequestId], references: [id], onDelete: Cascade)
+  reviewer        Member          @relation("ReviewsGiven", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewee        Member          @relation("ReviewsReceived", fields: [revieweeId], references: [id], onDelete: Cascade)
+
+  @@index([reviewerId])
+  @@index([revieweeId])
+  @@index([revieweeId, createdAt])
+  @@map("reviews")
 }
