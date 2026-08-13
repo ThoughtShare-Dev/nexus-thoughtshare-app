@@ -1,34 +1,35 @@
+import { describe, it, expect } from "vitest";
 import {
   hashPassword,
   comparePassword,
 } from "../src/utils/password.js";
 
-const runPasswordTest = async () => {
-  const password = "ThoughtShare123";
+describe("Password utilities", () => {
+  it("hashes a password and verifies the correct password", async () => {
+    const password = "ThoughtShare123";
 
-  console.log("Original password:");
-  console.log(password);
+    const hashedPassword = await hashPassword(password);
 
-  const hashedPassword = await hashPassword(password);
+    expect(hashedPassword).not.toBe(password);
 
-  console.log("\nHashed password:");
-  console.log(hashedPassword);
+    const isMatch = await comparePassword(
+      password,
+      hashedPassword
+    );
 
-  const isMatch = await comparePassword(
-    password,
-    hashedPassword
-  );
+    expect(isMatch).toBe(true);
+  });
 
-  console.log("\nCorrect password:");
-  console.log(isMatch);
+  it("rejects an incorrect password", async () => {
+    const password = "ThoughtShare123";
 
-  const isWrong = await comparePassword(
-    "WrongPassword",
-    hashedPassword
-  );
+    const hashedPassword = await hashPassword(password);
 
-  console.log("\nWrong password:");
-  console.log(isWrong);
-};
+    const isMatch = await comparePassword(
+      "WrongPassword",
+      hashedPassword
+    );
 
-runPasswordTest();
+    expect(isMatch).toBe(false);
+  });
+});

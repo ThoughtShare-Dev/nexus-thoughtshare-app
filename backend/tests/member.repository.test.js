@@ -1,11 +1,12 @@
-import {
-  findMemberByEmail,
-} from "../src/repositories/member.repository.js";
+import { describe, it, expect } from "vitest";
+import { findMemberByEmail } from "../src/repositories/member.repository.js";
 
-async function main() {
-  const member = await findMemberByEmail("test@example.com");
+describe("Member Repository", () => {
+  it("returns null when the member does not exist", async () => {
+    const member = await findMemberByEmail(
+      "nonexistent-test-user@example.com"
+    );
 
-  console.log(member);
-}
-
-main();
+    expect(member).toBeNull();
+  });
+});
