@@ -1,20 +1,12 @@
+import { describe, it, expect } from "vitest";
 import prisma from "../src/config/prisma.js";
 
-async function testConnection() {
-  try {
+describe("Prisma Database Connection", () => {
+  it("connects to PostgreSQL successfully", async () => {
     await prisma.$connect();
-
-    console.log("Connected to PostgreSQL");
 
     const members = await prisma.member.findMany();
 
-    console.log("Members:");
-    console.log(members);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-testConnection();
+    expect(Array.isArray(members)).toBe(true);
+  });
+});

@@ -27,6 +27,7 @@ model Member {
   ratingCount           Int          @default(0)
   isActive              Boolean      @default(true)
   hiddenFromSearch      Boolean      @default(false)
+  isAdmin               Boolean      @default(false)
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
 
@@ -38,6 +39,9 @@ model Member {
 
   reviewsGiven    Review[] @relation("ReviewsGiven")
   reviewsReceived Review[] @relation("ReviewsReceived")
+
+  reportsMade     Report[] @relation("ReportsMade")
+  reportsReceived Report[] @relation("ReportsReceived")
 
   @@index([hiddenFromSearch, isActive, avgRating, name])
   @@index([isActive])
@@ -125,4 +129,40 @@ model Review {
   @@index([revieweeId])
   @@index([revieweeId, createdAt])
   @@map("reviews")
+}
+
+enum ReportReason {
+  HARASSMENT
+  SCAM
+  INAPPROPRIATE_CONTENT
+  FAKE_PROFILE
+  SPAM
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+model Report {
+  id               String       @id @default(uuid()) @db.Uuid
+  reporterId       String       @db.Uuid
+  reportedMemberId String       @db.Uuid
+  reason           ReportReason
+  description      String?      @db.VarChar(1000)
+  status           ReportStatus @default(PENDING)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  reporter       Member @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedMember Member @relation("ReportsReceived", fields: [reportedMemberId], references: [id], onDelete: Cascade)
+
+  @@index([reporterId])
+  @@index([reportedMemberId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("reports")
 }
